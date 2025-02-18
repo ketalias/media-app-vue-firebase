@@ -8,9 +8,12 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "core-js": "^3.8.3",
-    "vue": "^3.2.13",
+    "core-js": "^3.40.0",
+    "swiper": "^11.2.2",
+    "vue": "^3.5.13",
     "vue-router": "^4.0.3",
+    "vue3-touch-events": "^5.0.13",
+    "vuetify": "^3.7.11",
     "vuex": "^4.0.0"
   },
   "devDependencies": {
