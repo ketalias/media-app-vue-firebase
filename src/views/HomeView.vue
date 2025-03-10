@@ -235,7 +235,7 @@ p {
 
   .gif {
     z-index: 2;
-    width: 40%;
+    width: 30%;
     height: 70%;
     background: url("../assets/folder.png");
     background-position: center;

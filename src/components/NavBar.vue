@@ -34,7 +34,8 @@ export default {
   display: flex;
   position: fixed;
   top: 0;
-  right: 40%;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1001;
   justify-content: space-between;
   align-items: center;
@@ -45,7 +46,7 @@ export default {
 }
 
 .navbar-logo a {
-  font-size: 24px;
+  font-size: 34px;
   text-decoration: none;
   color: white;
 }
@@ -81,7 +82,7 @@ export default {
 .navbar-links a {
   text-decoration: none;
   color: white;
-  font-size: 18px;
+  font-size: 24px;
 }
 
 .navbar-links a:hover {

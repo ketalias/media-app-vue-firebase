@@ -127,15 +127,30 @@ $overlay-color: rgba(0, 0, 0, 0.59);
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(270deg, $gradient-start 0%, $gradient-end 100%);
+  background: url("https://images.pexels.com/photos/240572/pexels-photo-240572.jpeg?cs=srgb&dl=pexels-joonas-kaariainen-67364-240572.jpg&fm=jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-color: rgba(0, 0, 0, 0.5);
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: $overlay-color;
+    z-index: 1;
+  }
 }
 
 .form-container {
   display: flex;
   width: 900px;
   height: 500px;
-  background-color: $white;
-  box-shadow: 0 0 10px 0 $shadow-color;
+  background-color: rgba(53, 49, 172, 0);
+  z-index: 2;
 }
 
 .logo {
@@ -197,6 +212,7 @@ input {
   align-items: center;
   padding: 20px;
   width: 100%;
+  height: 100%;
 
   h2 {
     margin-bottom: 20px;
@@ -231,6 +247,7 @@ input {
   width: 60%;
   min-width: 400px;
   color: rgb(255, 255, 255);
+  z-index: 2;
 
   .content {
     display: flex;
