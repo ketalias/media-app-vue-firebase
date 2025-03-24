@@ -1,0 +1,396 @@
+/* змінні з палітри "кібер зелений" */
+$primary-bg: #0d0d0d; // основний фон
+$secondary-bg: #111111; // вторинний фон (інтереси, заголовки)
+$card-bg: #181818; // фон карток і текстових блоків
+$hover-bg: #354039; // фон при наведенні
+$button-bg: #0b0e56; // фон кнопок
+$button-hover: #1327be; // зелений акцент при наведенні
+$gradient-start: #2b10b4; // початок градієнта (зелений)
+$gradient-end: #000000; // кінець градієнта (основний фон)
+$border-dark: #060621; // темний бордер
+$text-primary: #e0e0e0; // основний текст
+$text-secondary: #105ae4; // вторинний текст (м’якший зелений)
+$interest-hover: #110aee73; // зелений з прозорістю для інтересів
+$toggle-btn-bg: #0c1642; // фон кнопки перемикання
+
+/* твої стилі з новими змінними */
+* {
+  transition: all 0.3s ease-in-out;
+}
+
+.lib-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: auto;
+  background: linear-gradient(45deg, #0b0b0b, #080477);
+
+  .button:hover {
+    background-color: $button-hover;
+    transform: scale(1.1);
+  }
+
+  .main {
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+    padding: 40px;
+    border-radius: 30px;
+    gap: 20px;
+    width: 90%;
+    max-width: 1600px;
+    height: auto;
+    background-color: $primary-bg;
+
+    @media (max-width: 968px) {
+      flex-direction: column; // перемикаємо на колонку
+      width: 100%; // ширина на весь екран
+      padding: 20px; // зменшуємо відступи для телефону
+      gap: 15px;
+    }
+
+    .user-information {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 20px;
+      width: 25%;
+      height: 90vh;
+      background-color: $primary-bg;
+      @media (max-width: 968px) {
+        width: 100%; // займає весь простір
+        height: auto;
+      }
+
+      .main-information {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+        background-color: $primary-bg;
+        border-radius: 15px;
+
+        .background {
+          width: 100%;
+          border-radius: 15px;
+          height: 35%;
+          background: linear-gradient(
+            to bottom,
+            $gradient-start,
+            $gradient-end
+          );
+        }
+
+        img {
+          width: 150px;
+          height: 150px;
+          margin: 0 auto;
+          margin-top: auto;
+          transform: translateY(20%);
+          border: 7px solid $border-dark;
+          border-radius: 30%;
+        }
+
+        .information-text {
+          padding: 80px 0 20px 0;
+          width: 100%;
+          border-radius: 15px;
+          height: 65%;
+          background-color: $card-bg;
+          color: $text-primary;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 30px;
+          align-items: center;
+
+          p {
+            margin: 0;
+            font-size: 20px;
+          }
+
+          #nickname {
+            font-size: 24px;
+            font-weight: bold;
+          }
+
+          #gmail {
+            font-size: 18px;
+            color: $text-secondary;
+          }
+
+          button {
+            border: none;
+            border-radius: 25px;
+            font-weight: 100;
+            background-color: $button-bg;
+            color: $text-primary;
+            font-size: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+
+            &:hover {
+              background-color: $button-hover;
+            }
+          }
+        }
+      }
+
+      .interests {
+        width: 100%;
+        height: auto;
+        background-color: $primary-bg;
+
+        .interests-tags {
+          display: flex;
+          gap: 10px;
+          align-content: center;
+          justify-content: flex-start;
+          flex-wrap: wrap;
+          width: 100%;
+          height: 80%;
+          background-color: $primary-bg;
+          margin: 0;
+          padding: 0;
+
+          p {
+            padding: 15px 25px;
+            border-radius: 5px;
+            background-color: $secondary-bg;
+            color: $text-primary;
+            font-size: 16px;
+            margin: 0;
+            cursor: pointer;
+
+            &:hover {
+              background-color: $interest-hover;
+            }
+          }
+        }
+      }
+
+      .connections {
+        width: 100%;
+        height: auto;
+        background-color: $primary-bg;
+
+        .connections-header {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          height: 20%;
+          background-color: $secondary-bg;
+          color: $text-primary;
+
+          p {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 10px;
+          }
+        }
+
+        .connections-list {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          height: 80%;
+          gap: 20px;
+          background-color: $primary-bg;
+
+          .connect-user {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: auto;
+            border-radius: 5px;
+            color: $text-primary;
+            margin: 0;
+            cursor: pointer;
+
+            &:hover {
+              background-color: $hover-bg;
+            }
+
+            img {
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+            }
+
+            p {
+              padding: 0;
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+    .posts {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+      width: 55%;
+      height: auto;
+      min-height: 80vh;
+      background-color: $primary-bg;
+      z-index: 100;
+      @media (max-width: 968px) {
+        width: 100%; // займає весь простір
+        height: auto;
+      }
+
+      .user-library {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+        height: 100%;
+        background-color: $primary-bg;
+
+        .toggle-btn {
+          border: none;
+          cursor: pointer;
+          background: black;
+          border-radius: 5px;
+          transition: background 0.3s ease;
+          &:hover {
+            background: $button-hover;
+          }
+          img {
+            width: 25px;
+          }
+        }
+
+        .photos-grid {
+          display: grid;
+          gap: 10px;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          
+        }
+
+        .photos-grid.grid-view {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+        }
+
+        .photos-grid.list-view {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 10px;
+          max-width: 700px;
+
+          .photo-card {
+            max-width: 800px;
+            height: 100%;
+
+            .photo-card-image {
+              max-height: 600px;
+              object-fit: cover;
+            }
+          }
+        }
+      }
+    }
+    .recent-activity {
+      width: 20%;
+      height: 80vh;
+      border-radius: 10px;
+      background-color: $card-bg;
+      @media (max-width: 968px) {
+        width: 100%; // займає весь простір
+        height: auto;
+      }
+
+      .recent-activities {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        margin-top: 20px;
+
+        p {
+          margin: 10px 0;
+          display: flex;
+          align-items: center;
+          border-radius: 15px;
+          width: 90%;
+          background-color: $primary-bg;
+          justify-content: center;
+          min-height: 50px;
+          padding: 5px 10px;
+          border-radius: 5px;
+          color: $text-primary;
+          font-size: 16px;
+          margin: 0;
+          cursor: pointer;
+
+          &:hover {
+            background-color: $button-hover;
+          }
+        }
+      }
+    }
+  }
+}
+
+.publish {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 20%;
+  border-radius: 15px;
+  font-weight: bold;
+  background-color: $card-bg; // #2b332b
+  padding: 10px 0;
+
+  .publish-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    img {
+      width: 50px;
+      height: 50px;
+    }
+
+    p {
+      color: $text-primary; // #e0e0e0
+      font-size: 24px;
+    }
+  }
+
+  p {
+    color: $text-primary; // #e0e0e0
+    font-size: 18px;
+  }
+
+  img {
+    width: 50px;
+    height: 50px;
+  }
+
+  button {
+    width: 200px;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    background-color: $button-bg; // #2b332b
+    color: $text-primary; // #e0e0e0
+    font-size: 16px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $button-hover; // #00ff66
+    }
+  }
+}

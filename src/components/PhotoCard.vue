@@ -1,296 +1,292 @@
 <template>
-  <div :draggable="true" @dragstart="onDragStart" @dragend="onDragEnd">
-    <div class="photo-card" @click="openModal">
-      <img :src="imageSrc" :alt="imageAlt" class="photo-card-image" />
-    </div>
+  <div class="photo-card">
+    <img :src="imageSrc" class="photo-card-image" alt="Photo" />
+    <div class="photo-info">
+      <div class="interactions">
+        <span @click="toggleLike">
+          <img src="../assets/icons8-heart-100.png" alt="" />
+          {{ localLikes.length }}
+        </span>
+        <span @click="showComments = !showComments">
+          <img src="../assets/icons8-comments-64.png" alt="" />
+          {{ localComments.length }}
+        </span>
+      </div>
+      <div v-if="isEditingDescription">
+        <textarea
+          v-model="editedDescription"
+          placeholder="Edit description"
+        ></textarea>
+        <button @click="updateDescription">Save</button>
+        <button @click="isEditingDescription = false">Cancel</button>
+      </div>
+      <p v-else @click="startEditingDescription">
+        <b>{{ authorName }}</b
+        >: {{ editedDescription || description }}
+      </p>
 
-    <div v-if="isModalOpen" class="modal" @click="closeModal">
-      <div class="modal-content" @click.stop>
-        <div class="actions">
-          <!-- Like Button -->
-          <button class="like-button" @click.stop="handleLikeClick">
-            <img src="../assets/circle-heart.png" alt="like" />
-          </button>
+      <button v-if="userId === author" @click="deletePhoto" class="delete-btn">
+        Delete Photo
+      </button>
 
-          <!-- Move to Folder -->
-          <button class="move-folder-button" @click.stop="handleMoveToFolder">
-            <img src="../assets/move-to-folder.png" alt="move to folder" />
-          </button>
-
-          <!-- Hide Image -->
-          <button class="hide-button" @click.stop="handleHideImage">
-            <img src="../assets/eye-crossed.png" alt="hide image" />
-          </button>
-
-          <!-- Delete Button -->
-          <button class="delete-button" @click.stop="handleDeleteClick">
-            <img src="../assets/trash.png" alt="delete" />
-          </button>
-
-          <!-- Download Image -->
-          <button class="download-button" @click.stop="handleDownload">
-            <img src="../assets/trash.png" alt="download" />
-          </button>
-
-          <!-- Share Image -->
-          <button class="share-button" @click.stop="handleShare">
-            <img src="../assets/trash.png" alt="share" />
-          </button>
-
-          <!-- Edit Image -->
-          <button class="edit-button" @click.stop="handleEdit">
-            <img src="../assets/trash.png" alt="edit" />
-          </button>
-
-          <!-- AI Caption Generator -->
-          <button class="caption-button" @click.stop="generateAICaption">
-            <img src="../assets/trash.png" alt="AI caption" />
-          </button>
-
-          <!-- Slideshow -->
-          <button class="slideshow-button" @click.stop="startSlideshow">
-            <img src="../assets/trash.png" alt="slideshow" />
+      <div v-if="showComments" class="comments">
+        <div
+          v-for="(comment, index) in localComments"
+          :key="index"
+          class="comment"
+        >
+          <strong>{{ comment.username || "Anonymous" }}</strong
+          >: {{ comment.text }}
+          <button
+            v-if="userId === author || comment.username === username"
+            @click="deleteComment(comment)"
+          >
+            Delete
           </button>
         </div>
-
-        <img
-          :src="images[currentImageIndex].src"
-          :alt="images[currentImageIndex].alt"
-          class="modal-image"
-          :key="currentImageIndex"
+        <input
+          v-model="newComment"
+          type="text"
+          placeholder="Add a comment..."
+          @keyup.enter="addComment"
         />
-
-        <p class="ai-description">
-          {{ images[currentImageIndex].description }}
-        </p>
-        <div class="arrows">
-          <button class="prev-button" @click="prevImage">
-            <img src="../assets/left-arrow.png" alt="" />
-          </button>
-          <button class="next-button" @click="nextImage">
-            <img src="../assets/right-arrow.png" alt="" />
-          </button>
-        </div>
+        <button @click="addComment">Post</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { db } from "@/firebase";
+import {
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDoc,
+  arrayRemove,
+  increment,
+  onSnapshot,
+  deleteDoc,
+} from "firebase/firestore";
+import { getStorage, ref, deleteObject } from "firebase/storage";
+import { getAuth } from "firebase/auth";
+
+const auth = getAuth();
+
 export default {
   name: "PhotoCard",
   props: {
     imageSrc: { type: String, required: true },
-    imageAlt: { type: String, required: true },
-    tags: { type: Array, required: false, default: () => [] }, // New prop for tags
-    description: { type: String, required: false, default: "" }, // New prop for AI description
-    images: { type: Array, required: true },
+    description: { type: String, default: "No description available." },
+    photoId: { type: String, required: true },
   },
   data() {
     return {
-      isModalOpen: false,
-      currentImageIndex: 0,
+      isLiked: false,
+      newComment: "",
+      showComments: false,
+      userId: null,
+      username: "Anonymous",
+      localLikes: [],
+      localComments: [],
+      author: null,
+      authorName: "none",
+      isEditingDescription: false,
+      editedDescription: "",
     };
   },
+  mounted() {
+    const user = auth.currentUser;
+    console.log(user);
+    if (user) {
+      this.userId = user.uid;
+      this.fetchUsername(user.uid);
+    } else {
+      this.userId = null;
+      this.username = "Anonymous";
+    }
+
+    const photoRef = doc(db, "photos", this.photoId);
+    // Реактивно оновлюємо дані з глобальної колекції
+    onSnapshot(photoRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        this.author = data.author;
+        this.authorName = data.authorName;
+        this.localLikes = data.likes || [];
+        this.localComments = data.comments || [];
+        this.isLiked = this.userId && this.localLikes.includes(this.userId);
+        this.editedDescription = data.description || this.description;
+      } else {
+        console.error(`Document with photoId ${this.photoId} does not exist.`);
+      }
+    });
+  },
   methods: {
-    openModal() {
-      this.isModalOpen = true;
-      this.currentImageIndex = this.images.findIndex(
-        (image) => image.src === this.imageSrc
-      );
+    async fetchUsername(uid) {
+      try {
+        const userRef = doc(db, "users", uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          this.username = userData.name || userData.displayName || "Anonymous"; // беремо name або displayName
+        } else {
+          this.username = "Anonymous";
+        }
+      } catch (error) {
+        console.error("Error fetching username:", error);
+        this.username = "Anonymous";
+      }
     },
-    closeModal() {
-      this.isModalOpen = false;
+    async deletePhoto() {
+      if (!this.userId) {
+        alert("Please log in to delete this photo.");
+        return;
+      }
+
+      if (this.userId !== this.author) {
+        alert("Only the author can delete this photo.");
+        return;
+      }
+
+      if (
+        !confirm(
+          "Are you sure you want to delete this photo? This action cannot be undone."
+        )
+      ) {
+        return;
+      }
+
+      const photoRef = doc(db, "users", this.author, "photos", this.photoId);
+      const photoCopyRef = doc(db, "photos", this.photoId);
+      const storage = getStorage();
+
+      const imageRef = ref(storage, this.imageSrc);
+
+      try {
+        await deleteObject(imageRef);
+        await deleteDoc(photoRef);
+        await deleteDoc(photoCopyRef);
+        this.isDeleted = true;
+        this.$emit("photo-deleted", this.photoId);
+      } catch (error) {
+        console.error("Error deleting photo:", error);
+      }
     },
-    prevImage() {
-      this.currentImageIndex =
-        this.currentImageIndex > 0
-          ? this.currentImageIndex - 1
-          : this.images.length - 1;
+    async toggleLike() {
+      if (!this.userId) {
+        alert("Please log in to like this photo.");
+        return;
+      }
+
+      const photoRef = doc(db, "photos", this.photoId);
+      try {
+        if (this.isLiked) {
+          await updateDoc(photoRef, {
+            likes: arrayRemove(this.userId),
+            likeCount: increment(-1),
+          });
+        } else {
+          await updateDoc(photoRef, {
+            likes: arrayUnion(this.userId),
+            likeCount: increment(1),
+          });
+        }
+      } catch (error) {
+        console.error("Error updating likes:", error);
+      }
     },
-    nextImage() {
-      this.currentImageIndex =
-        this.currentImageIndex < this.images.length - 1
-          ? this.currentImageIndex + 1
-          : 0;
+    async addComment() {
+      if (!this.userId) {
+        alert("Please log in to comment.");
+        return;
+      }
+
+      const commentText = this.newComment.trim();
+      if (!commentText) {
+        alert("Please enter a valid comment.");
+        return;
+      }
+
+      const newCommentData = {
+        username: this.username,
+        text: commentText,
+        timestamp: new Date().toISOString(),
+      };
+
+      const photoRef = doc(db, "photos", this.photoId);
+      try {
+        await updateDoc(photoRef, {
+          comments: arrayUnion(newCommentData),
+        });
+        this.newComment = "";
+      } catch (error) {
+        console.error("Error adding comment:", error);
+      }
     },
-    handleLikeClick() {
-      alert("You liked this photo! ❤️");
+
+    async deleteComment(comment) {
+      if (!this.userId) {
+        alert("Please log in to delete a comment.");
+        return;
+      }
+
+      // Перевірка, чи користувач є автором коментаря або фото
+      if (this.userId !== this.author && comment.username !== this.username) {
+        alert(
+          "You can only delete your own comments or comments on your photo."
+        );
+        return;
+      }
+
+      const photoRef = doc(db, "photos", this.photoId);
+      try {
+        await updateDoc(photoRef, {
+          comments: arrayRemove(comment),
+        });
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+      }
     },
-    handleMoveToFolder() {
-      alert("Move this photo to another folder.");
+    async updateDescription() {
+      if (!this.userId) {
+        alert("Please log in to update the description.");
+        return;
+      }
+
+      // Перевірка, чи користувач є автором фото
+      if (this.userId !== this.author) {
+        alert("Only the author can update the description.");
+        return;
+      }
+
+      const newDescription = this.editedDescription.trim();
+      if (!newDescription) {
+        alert("Description cannot be empty.");
+        return;
+      }
+
+      const photoRef = doc(db, "photos", this.photoId);
+      try {
+        await updateDoc(photoRef, {
+          description: newDescription,
+        });
+        this.isEditingDescription = false; // Закриваємо режим редагування
+      } catch (error) {
+        console.error("Error updating description:", error);
+      }
     },
-    handleHideImage() {
-      alert("This photo has been hidden.");
-    },
-    handleDeleteClick() {
-      alert("Are you sure you want to delete this photo?");
-    },
-    handleDownload() {
-      const link = document.createElement("a");
-      link.href = this.images[this.currentImageIndex].src;
-      link.download = "photo.jpg";
-      link.click();
-    },
-    handleShare() {
-      navigator.clipboard.writeText(this.images[this.currentImageIndex].src);
-      alert("Photo link copied to clipboard! 📋");
-    },
-    handleEdit() {
-      alert("Photo Editor coming soon! ✏️");
-    },
-    generateAICaption() {
-      alert("AI says: 'A breathtaking view! 🌄'");
-    },
-    startSlideshow() {
-      alert("Starting slideshow mode! 🎥");
+    startEditingDescription() {
+      if (this.userId === this.author) {
+        this.isEditingDescription = true;
+      } else {
+        alert("Only the author can edit the description.");
+      }
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.ai-description {
-  font-size: 24px;
-  color: #ffffff;
-}
-.photo-card {
-  background: #fff;
-  position: relative;
-  width: 20vw;
-  max-width: 250px;
-  height: 20vw;
-  max-height: 250px;
-  box-sizing: border-box;
-  height: 20vw;
-  overflow: hidden;
-  z-index: 1;
-  border: 3px solid blue;
-  transition: transform 0.3s ease-in-out, z-index 0s;
-  &:hover {
-    cursor: pointer;
-    transform: scale(1.03);
-    z-index: 2;
-    transition: transform 0.3s ease-in-out, z-index 0s;
-  }
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease-in-out;
-  }
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-
-  .modal-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    position: relative;
-    width: 90vw;
-    max-width: 900px;
-    height: 90vh;
-    background: linear-gradient(270deg, rgb(3, 3, 41) 0%, rgb(10, 10, 98) 100%);
-
-    .modal-image {
-      height: 90%;
-      width: auto;
-      object-fit: contain;
-    }
-    .close-modal {
-      position: absolute;
-      width: auto;
-      top: 10px;
-      left: 10px;
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      border: none;
-      cursor: pointer;
-      &:hover {
-        background: red;
-      }
-    }
-  }
-  .actions {
-    display: flex;
-    flex-direction: row;
-    width: auto;
-    height: auto;
-    position: absolute;
-    top: 0;
-    button {
-      background: #f8f8f8af;
-      color: white;
-      border: none;
-      width: auto;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      z-index: 0;
-      img {
-        width: 20px;
-      }
-    }
-    .delete-button:hover {
-      background: red;
-    }
-    .like-button:hover {
-      background: #e908de;
-    }
-    .move-folder-button:hover {
-      background: #2b0cc5;
-    }
-    .hide-button:hover {
-      background: #858382;
-    }
-  }
-}
-
-.arrows {
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
-  width: 90%;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
-}
-
-.prev-button,
-.next-button {
-  background: none;
-  width: auto;
-  height: auto;
-  background-color: none;
-  border: none;
-  cursor: pointer;
-  img {
-    opacity: 10%;
-    width: 150px;
-    &:hover {
-      opacity: 100%;
-    }
-  }
-}
-
-.prev-button {
-  left: 10px;
-}
-
-.next-button {
-  right: 10px;
-}
+@import "@/styles/post-card.scss";
 </style>

@@ -23,6 +23,39 @@ body {
   margin: 0;
 }
 
+body {
+  font-family: "Roboto", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  background: linear-gradient(90deg, #0b0b0b, #080477);
+}
+
+section {
+  margin: 5vh 0;
+  font-family: "Roboto", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+h1,
+p {
+  font-family: "Roboto", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  color: white;
+}
+h1 {
+  font-weight: 500;
+  font-size: 5rem;
+}
+
+p {
+  font-size: 1.5rem;
+}
+
 ::-webkit-scrollbar {
   display: none; /* If you want to hide the scrollbar */
 }
@@ -36,20 +69,6 @@ body {
   font-family: "Roboto", sans-serif; /* Ensuring the correct font is used */
   font-optical-sizing: auto;
   font-style: normal;
-}
-
-nav {
-  padding: 20px 30px; /* Adjust padding as needed */
-}
-
-a {
-  font-weight: bold;
-  color: #2c3e50;
-  text-decoration: none; /* Removes the default underline */
-
-  &.router-link-exact-active {
-    color: #42b983;
-  }
 }
 
 @media screen and (max-width: 768px) {
