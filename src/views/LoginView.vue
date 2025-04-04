@@ -5,63 +5,67 @@
     </div>
 
     <div class="form-container">
-      <div class="forms">
-        <transition name="slide-fade" mode="out-in">
-          <div class="register-form" v-if="registerBool">
-            <h2>Create Account</h2>
-            <form @submit.prevent="handleRegister">
-              <div class="input-container">
-                <input type="text" placeholder="Name" v-model="name" required />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  v-model="registerEmail"
-                  required
-                />
-                <input
-                  type="password"
-                  placeholder="Password"
-                  v-model="registerPassword"
-                  required
-                />
-                <button type="submit">Sign Up</button>
-              </div>
-            </form>
-          </div>
-        </transition>
-        <transition name="slide-fade" mode="out-in">
-          <div class="login-container" v-if="loginBool">
-            <h2>Sign In</h2>
-            <form @submit.prevent="handleLogin">
-              <div class="input-container">
-                <input type="email" id="email" v-model="email" required />
-                <input
-                  type="password"
-                  id="password"
-                  v-model="password"
-                  required
-                />
-                <button type="submit">Login</button>
-              </div>
-            </form>
-          </div>
-        </transition>
-      </div>
       <transition name="slide-fade" mode="out-in">
-        <div class="toggle-block">
-          <div class="content">
-            <div class="text">
-              <h1>Hello, friend!</h1>
-              <p>Start work with us and blast your creativity</p>
+        <div class="register-form" v-if="registerBool">
+          <h2>Create Account</h2>
+          <form @submit.prevent="handleRegister">
+            <div class="input-container">
+              <label for="name">Name</label>
+              <input type="text" placeholder="Name" v-model="name" required />
+              <label for="email">Email</label>
+              <input
+                type="email"
+                placeholder="Email"
+                v-model="registerEmail"
+                required
+              />
+              <label for="password">Password</label>
+              <input
+                type="password"
+                placeholder="Password"
+                v-model="registerPassword"
+                required
+              />
+              <div class="buttons">
+                <button type="submit">Submit</button>
+                <button
+                  class="toggle-button"
+                  @click="toggleRegister"
+                  :class="{ active: registerBool }"
+                >
+                  Sign In
+                </button>
+              </div>
             </div>
-            <button
-              class="toggle-button"
-              @click="toggleRegister"
-              :class="{ active: registerBool }"
-            >
-              {{ registerBool ? "Sign In" : "Register" }}
-            </button>
-          </div>
+          </form>
+        </div>
+      </transition>
+      <transition name="slide-fade" mode="out-in">
+        <div class="login-container" v-if="loginBool">
+          <h2>Sign In</h2>
+          <form @submit.prevent="handleLogin">
+            <div class="input-container">
+              <label for="email">Email</label>
+              <input type="email" id="email" v-model="email" required />
+              <label for="password">Password</label
+              ><input
+                type="password"
+                id="password"
+                v-model="password"
+                required
+              />
+              <div class="buttons">
+                <button type="submit">Submit</button
+                ><button
+                  class="toggle-button"
+                  @click="toggleRegister"
+                  :class="{ active: registerBool }"
+                >
+                  Sign Up
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       </transition>
     </div>
@@ -155,12 +159,12 @@ export default {
 
         setTimeout(() => {
           this.loginBool = !this.loginBool;
-        }, 850);
+        }, 450);
       } else {
         this.loginBool = !this.loginBool;
         setTimeout(() => {
           this.registerBool = !this.registerBool;
-        }, 850);
+        }, 450);
       }
     },
   },

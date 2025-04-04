@@ -29,6 +29,11 @@ body {
   width: 100%;
   height: 100%;
   margin: 0;
+  overscroll-behavior: none;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
+  background-color: black;
 }
 
 body {
@@ -37,6 +42,7 @@ body {
   font-style: normal;
   font-variation-settings: "wdth" 100;
   background: linear-gradient(90deg, #0b0b0b, #050346);
+  overflow-x: hidden;
 }
 
 section {
