@@ -3,13 +3,17 @@
     <img :src="imageSrc" class="photo-card-image" alt="Photo" />
     <div class="photo-info">
       <div class="interactions">
-        <span @click="toggleLike">
-          <img src="../assets/icons8-heart-100.png" alt="" />
-          {{ localLikes.length }}
+        <span @click="toggleLike" class="icon-wrapper">
+          <img
+            :src="isLiked ? likeFilledIcon : likeIcon"
+            alt="Like"
+            :class="{ liked: isAnimating }"
+          />
+          <p>{{ localLikes.length }}</p>
         </span>
-        <span @click="showComments = !showComments">
-          <img src="../assets/icons8-comments-64.png" alt="" />
-          {{ localComments.length }}
+        <span @click="showComments = !showComments" class="icon-wrapper">
+          <img src="../assets/comment.png" alt="Comment" />
+          <p>{{ localComments.length }}</p>
         </span>
       </div>
       <div v-if="isEditingDescription">
@@ -26,7 +30,7 @@
       </p>
 
       <button v-if="userId === author" @click="deletePhoto" class="delete-btn">
-        Delete Photo
+        <img src="../assets/trash.png" alt="" />
       </button>
 
       <div v-if="showComments" class="comments">
@@ -83,6 +87,7 @@ export default {
   data() {
     return {
       isLiked: false,
+      isAnimating: false,
       newComment: "",
       showComments: false,
       userId: null,
@@ -93,6 +98,8 @@ export default {
       authorName: "none",
       isEditingDescription: false,
       editedDescription: "",
+      likeIcon: require("../assets/like.png"),
+      likeFilledIcon: require("../assets/like-filled.png"),
     };
   },
   mounted() {
@@ -179,6 +186,8 @@ export default {
         return;
       }
 
+      this.isAnimating = true;
+
       const photoRef = doc(db, "photos", this.photoId);
       try {
         if (this.isLiked) {
@@ -194,6 +203,11 @@ export default {
         }
       } catch (error) {
         console.error("Error updating likes:", error);
+      } finally {
+        // Завершуємо анімацію після оновлення
+        setTimeout(() => {
+          this.isAnimating = false;
+        }, 300);
       }
     },
     async addComment() {

@@ -11,32 +11,44 @@
             />
           </div>
           <div class="information-text">
-            <div>
-              <p id="nickname">{{ username }}</p>
-              <p id="gmail">{{ usergmail }}</p>
-            </div>
             <div class="follows-container">
-              <div>
-                {{ followers.length }}
-                Followers
-              </div>
-              <div>
-                {{ following.length }}
-                Following
-              </div>
+              <article>
+                <p>Followers</p>
+                <p>
+                  {{ followers.length }}
+                </p>
+              </article>
+              <article>
+                <p>Following</p>
+                <p>
+                  {{ following.length }}
+                </p>
+              </article>
             </div>
-            <p>{{ description }}</p>
-            <button v-if="isCurrentUser" @click="modalEditProfile">
-              Edit profile
-            </button>
-            <button
-              v-if="!isCurrentUser"
-              @click="
-                following.includes(targetUserId) ? unfollowUser() : followUser()
-              "
-            >
-              {{ following.includes(targetUserId) ? "Unfollow" : "Follow" }}
-            </button>
+            <div class="ngd">
+              <div>
+                <p id="nickname">{{ username }}</p>
+                <p id="gmail">{{ usergmail }}</p>
+              </div>
+              <p class="description">{{ description }}</p>
+            </div>
+            <div>
+              <button v-if="isCurrentUser" @click="modalEditProfile">
+                <p>Edit profile</p>
+              </button>
+              <button
+                v-if="!isCurrentUser"
+                @click="
+                  following.includes(targetUserId)
+                    ? unfollowUser()
+                    : followUser()
+                "
+              >
+                <p>
+                  {{ following.includes(targetUserId) ? "Unfollow" : "Follow" }}
+                </p>
+              </button>
+            </div>
           </div>
         </div>
         <div class="interests">
@@ -51,7 +63,6 @@
         </div>
       </div>
       <div class="posts">
-        <PostsScroll v-if="isCurrentUser" />
         <div class="user-library">
           <button @click="toggleView" class="toggle-btn">
             <img
@@ -74,12 +85,6 @@
           </div>
         </div>
       </div>
-      <div class="recent-activity">
-        <div class="section-header">
-          <p>Recent Activity</p>
-        </div>
-        <div class="recent-activities"><p>Nothing...</p></div>
-      </div>
     </div>
   </div>
 </template>
@@ -94,7 +99,6 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
-import PostsScroll from "@/components/PostComp.vue";
 import PhotoCard from "@/components/PhotoCard.vue";
 import { db } from "@/firebase";
 
@@ -103,7 +107,6 @@ const auth = getAuth();
 export default {
   name: "UserView",
   components: {
-    PostsScroll,
     PhotoCard,
   },
   data() {
@@ -118,7 +121,7 @@ export default {
       profilePicture: "",
       images: [],
       interests: [],
-      isGridView: true,
+      isGridView: false,
       currentUser: null, // Залогінений користувач
       targetUserId: null, // ID користувача, чий профіль переглядається
     };
@@ -329,7 +332,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import "@/styles/userview.scss";
 @media (max-width: 968px) {
   .main {
     flex-direction: column; // перемикаємо на колонку

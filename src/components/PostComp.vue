@@ -1,11 +1,5 @@
 <template>
   <div class="publish">
-    <div class="publish-text">
-      <p>
-        Publish your
-        <span style="color: #105ae4">creativity</span>!
-      </p>
-    </div>
     <button @click="toggleUploadForm">Publish</button>
     <div v-if="uploadForm"><PhotoUploadForm /></div>
   </div>
@@ -48,6 +42,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-@import "@/styles/userview.scss";
-</style>
+<style lang="scss" scoped></style>

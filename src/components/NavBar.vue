@@ -1,28 +1,13 @@
 <template>
   <nav class="navbar">
-    <div class="logo-wrap">
-      <img class="logo" src="../assets/logo.png" alt="" />
-      <h1>WebFlow</h1>
-    </div>
-
     <div :class="['navbar-links', { active: isMenuOpen }]">
-      <ul>
-        <li>
-          <router-link to="/home" active-class="active-link">
-            <img src="../assets/icons8-home-240.png" alt="Home" />
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/profile" active-class="active-link">
-            <img src="../assets/icons8-user-96.png" alt="User" />
-          </router-link>
-        </li>
-      </ul>
-    </div>
-
-    <div class="logout">
-      <button @click="handleLogout">Log out</button>
-      <img :src="profilePicture" alt="Profile Picture" class="profile-pic" />
+      <router-link to="/home" active-class="active-link">
+        <img src="../assets/icons8-home-240.png" alt="Home" />
+      </router-link>
+      <router-link to="/profile" active-class="active-link">
+        <img src="../assets/icons8-user-96.png" alt="User" />
+      </router-link>
+      <img @click="handleLogout" src="../assets/logout.png" alt="" />
     </div>
   </nav>
 </template>
@@ -52,13 +37,12 @@ export default {
   methods: {
     async handleLogout() {
       try {
-        await signOut(auth); // Виконуємо вихід із Firebase Authentication
-        localStorage.removeItem("user"); // Видаляємо дані користувача з localStorage
-        this.currentUser = null; // Очищаємо стан залогіненого користувача
-        this.$router.push("/login"); // Перенаправляємо на сторінку логіну
+        await signOut(auth);
+        localStorage.removeItem("user");
+        this.currentUser = null;
+        this.$router.push("/login");
       } catch (error) {
         console.error("Error logging out:", error.message);
-        // Опціонально: можна додати повідомлення для користувача про помилку
       }
     },
     toggleMenu() {
@@ -95,36 +79,28 @@ export default {
 <style lang="scss" scoped>
 .navbar {
   display: flex;
-  position: sticky;
-  justify-content: space-between;
+  position: fixed;
+  justify-content: center;
   align-items: center;
   width: 100%;
   height: 10vh;
   box-sizing: border-box;
-  top: 0;
+  bottom: 10px;
   z-index: 1001;
   padding: 10px 20px;
   color: white;
-  background-color: #000000;
   .navbar-links {
-    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
     list-style: none;
-    ul {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: auto;
-      list-style: none;
-      gap: 10px;
-      li {
-        outline: none;
-        text-decoration: none;
-        list-style: none;
-        img {
-          width: 30px;
-          height: auto;
-        }
-      }
+    background-color: #000000e6;
+    padding: 10px 20px;
+    border-radius: 20px;
+    img {
+      width: 35px;
+      height: auto;
     }
   }
   .logo-wrap {
@@ -149,7 +125,10 @@ export default {
   }
   .logout {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
     img {
       width: 50px;
     }

@@ -216,6 +216,7 @@ $background-color: #121212;
   padding: 20px;
   border-radius: 10px;
   box-shadow: $box-shadow;
+  z-index: 10000;
 }
 
 .error {
@@ -241,7 +242,6 @@ $background-color: #121212;
   padding: 20px;
   border-radius: 10px;
 }
-
 .modal-content {
   background: black;
   padding: 20px;

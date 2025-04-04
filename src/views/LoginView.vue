@@ -76,7 +76,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { doc, setDoc, collection } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 
 export default {
@@ -102,47 +102,24 @@ export default {
         );
         const user = userCredential.user;
 
-        console.log("✅ User registered:", user.uid);
-
         if (!auth.currentUser) {
           throw new Error("User is not authenticated before Firestore write.");
         }
 
-        // Reference to the user's document
         const userDocRef = doc(db, "users", user.uid);
-
-        // Firestore user creation
-        try {
-          await setDoc(userDocRef, {
-            name: this.name,
-            email: this.registerEmail,
-            uid: user.uid,
-            createdAt: new Date(),
-            profilePicture: "",
-            description: "",
-            interests: [],
-            followers: [],
-            following: [],
-          });
-
-          console.log("✅ User document added to Firestore!");
-
-          // ✅ Create an empty "photos" subcollection for this user
-          const photosCollectionRef = collection(userDocRef, "photos");
-
-          await setDoc(doc(photosCollectionRef, "init"), {
-            message: "Photo collection initialized",
-            createdAt: new Date(),
-          });
-
-          console.log("✅ 'photos' subcollection created for user:", user.uid);
-        } catch (firestoreError) {
-          console.error(
-            "❌ Firestore error:",
-            firestoreError.code,
-            firestoreError.message
-          );
-        }
+        const defaultProfilePic =
+          "https://firebasestorage.googleapis.com/v0/b/interactive-album.firebasestorage.app/o/profilePictures%2Fnewuser.jpg?alt=media&token=https://firebasestorage.googleapis.com/v0/b/interactive-album.firebasestorage.app/o/profilePictures%2Fnewuser.jpg?alt=media&token=0acd953f-0dca-4162-b9ff-de86bd4b03c7";
+        await setDoc(userDocRef, {
+          name: this.name,
+          email: this.registerEmail,
+          uid: user.uid,
+          createdAt: new Date(),
+          profilePicture: defaultProfilePic,
+          description: "",
+          interests: [],
+          followers: [],
+          following: [],
+        });
       } catch (authError) {
         console.error(
           "❌ Authentication error:",

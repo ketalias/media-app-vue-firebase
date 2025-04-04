@@ -1,68 +1,82 @@
 <template>
-  <div class="main">
-    <div class="user-search">
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="Search users by name or email..."
-        @input="filterUsers"
-        class="user-search__input"
-      />
-    </div>
-    <div class="user-search-results">
-      <div v-if="filteredUsers.length > 0" class="user-list">
-        <div
-          v-for="(user, index) in filteredUsers"
-          :key="index"
-          class="user-card"
-          @click="viewUserProfile(user)"
-        >
-          <img
-            :src="user.profilePicture || '../assets/default-avatar.png'"
-            alt="User Avatar"
-            class="user-card__avatar"
-          />
-          <div class="user-card__info">
-            <p class="user-card__username">{{ user.name }}</p>
-            <p class="user-card__email">{{ user.email }}</p>
+  <div>
+    <div class="main">
+      <div class="user-search">
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Search users..."
+          @input="filterUsers"
+          class="user-search__input"
+        />
+        <PostsScroll />
+      </div>
+      <div class="user-search-results">
+        <div v-if="filteredUsers.length > 0" class="user-list">
+          <div
+            v-for="(user, index) in filteredUsers"
+            :key="index"
+            class="user-card"
+            @click="viewUserProfile(user)"
+          >
+            <img
+              :src="user.profilePicture || '../assets/default-avatar.png'"
+              alt="User Avatar"
+              class="user-card__avatar"
+            />
+            <div class="user-card__info">
+              <p class="user-card__username">{{ user.name }}</p>
+              <p class="user-card__email">{{ user.email }}</p>
+            </div>
           </div>
         </div>
+        <p v-else class="user-search-results__empty">No users found.</p>
       </div>
-      <p v-else class="user-search-results__empty">No users found.</p>
-    </div>
 
-    <div class="photo-feed">
-      <h3 class="photo-feed__title">Explore Photos</h3>
-      <div class="photo-feed__controls">
-        <button @click="togglePhotoView" class="toggle-btn">
-          {{
-            showFollowingPhotos ? "Show Random Photos" : "Show Following Photos"
-          }}
-        </button>
-        <input
-          v-model="tagQuery"
-          type="text"
-          placeholder="Filter by tags..."
-          @input="filterPhotosByTag"
-          class="photo-feed__filter-input"
-        />
+      <div class="photo-feed">
+        <div class="feed-type">
+          <button
+            @click="showFollowingPhotos = false"
+            :class="{ active: !showFollowingPhotos }"
+            class="tab-btn"
+          >
+            Users
+          </button>
+          <button
+            @click="showFollowingPhotos = true"
+            :class="{ active: showFollowingPhotos }"
+            class="tab-btn"
+          >
+            Following
+          </button>
+        </div>
+        <div class="photo-feed-controls">
+          <p>Feeds</p>
+          <input
+            v-model="tagQuery"
+            type="text"
+            placeholder="Filter by tags..."
+            @input="filterPhotosByTag"
+            class="photo-feed__filter-input"
+          />
+        </div>
+        <div class="photo-feed-grid">
+          <PhotoCard
+            v-for="photo in displayedPhotos"
+            :key="photo.id"
+            :photoId="photo.id"
+            :imageSrc="photo.photoURL"
+            :description="photo.imgDescription"
+            :author="photo.authorData"
+          />
+        </div>
+        <p
+          v-if="showFollowingPhotos && displayedPhotos.length === 0"
+          class="photo-feed__empty"
+        >
+          No photos from followed users yet.
+        </p>
       </div>
-      <div class="photo-feed__grid">
-        <PhotoCard
-          v-for="photo in displayedPhotos"
-          :key="photo.id"
-          :photoId="photo.id"
-          :imageSrc="photo.photoURL"
-          :description="photo.imgDescription"
-          :author="photo.authorData"
-        />
-      </div>
-      <p
-        v-if="showFollowingPhotos && displayedPhotos.length === 0"
-        class="photo-feed__empty"
-      >
-        No photos from followed users yet.
-      </p>
     </div>
   </div>
 </template>
@@ -72,6 +86,7 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "@/firebase";
 import PhotoCard from "@/components/PhotoCard.vue";
+import PostsScroll from "@/components/PostComp.vue";
 
 const auth = getAuth();
 
@@ -79,6 +94,7 @@ export default {
   name: "HomeView",
   components: {
     PhotoCard,
+    PostsScroll,
   },
   data() {
     return {
@@ -208,12 +224,8 @@ export default {
       const shuffled = [...array].sort(() => 0.5 - Math.random());
       return shuffled.slice(0, count);
     },
-    filterPhotosByTag() {
-      // Фільтрація вже обробляється в computed: displayedPhotos
-      // Оновлення randomPhotos не потрібне, бо displayedPhotos все враховує
-    },
-    togglePhotoView() {
-      this.showFollowingPhotos = !this.showFollowingPhotos;
+    followingView() {
+      this.showFollowingPhotos = true;
     },
   },
 };

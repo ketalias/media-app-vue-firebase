@@ -7,6 +7,12 @@ import { auth } from "@/firebase";
 
 const routes = [
   {
+    path: "/",
+    beforeEnter: (to, from, next) => {
+      next("/login");
+    },
+  },
+  {
     path: "/home",
     name: "home",
     component: HomeView,

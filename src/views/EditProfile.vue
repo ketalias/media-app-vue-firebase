@@ -142,6 +142,8 @@ export default {
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: rgba(14, 14, 14, 0.781);
+  color: white;
 }
 .profile-picture img {
   width: 100px;
@@ -169,11 +171,7 @@ button {
   margin-top: 15px;
   padding: 10px;
   border: none;
-  background-color: #007bff;
   color: white;
   cursor: pointer;
-}
-button:hover {
-  background-color: #0056b3;
 }
 </style>

@@ -16,6 +16,14 @@ export default {
 </script>
 
 <style lang="scss">
+* {
+  box-sizing: border-box;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out,
+    transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+button:hover {
+  transform: scale(1.05); /* Легке збільшення */
+}
 html,
 body {
   width: 100%;
@@ -28,7 +36,7 @@ body {
   font-optical-sizing: auto;
   font-style: normal;
   font-variation-settings: "wdth" 100;
-  background: linear-gradient(90deg, #0b0b0b, #080477);
+  background: linear-gradient(90deg, #0b0b0b, #050346);
 }
 
 section {
@@ -54,6 +62,7 @@ h1 {
 
 p {
   font-size: 1.5rem;
+  font-weight: 350;
 }
 
 ::-webkit-scrollbar {
