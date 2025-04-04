@@ -8,9 +8,7 @@ import { auth } from "@/firebase";
 const routes = [
   {
     path: "/",
-    beforeEnter: (to, from, next) => {
-      next("/login");
-    },
+    redirect: "/profile",
   },
   {
     path: "/home",
