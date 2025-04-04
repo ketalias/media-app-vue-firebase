@@ -334,33 +334,33 @@ export default {
 <style lang="scss">
 @media (max-width: 968px) {
   .main {
-    flex-direction: column; // перемикаємо на колонку
-    width: 100%; // ширина на весь екран
-    padding: 20px; // зменшуємо відступи для телефону
-    gap: 15px; // трішки менший зазор між блоками
+    flex-direction: column;
+    width: 100%;
+    padding: 20px;
+    gap: 15px;
   }
   .user-information {
-    width: 100%; // займає весь простір
-    height: auto; // висота адаптивна, не фіксована 90vh
+    width: 100%;
+    height: auto;
   }
   .posts {
-    width: 100%; // теж на всю ширину
-    min-height: auto; // прибираємо фіксовану висоту
+    width: 100%;
+    min-height: auto;
   }
   .recent-activity {
-    width: 100%; // на всю ширину
-    height: auto; // адаптивна висота
-    margin-top: 15px; // відступ зверху для порядку
+    width: 100%;
+    height: auto;
+    margin-top: 15px;
   }
   .photos-grid.grid-view {
-    grid-template-columns: repeat(2, 1fr); // 2 колонки замість 3 на телефоні
+    grid-template-columns: repeat(2, 1fr);
   }
   .photos-grid.list-view {
-    max-width: 100%; // ширина на весь екран
+    max-width: 100%;
   }
   .publish {
-    height: auto; // адаптивна висота
-    padding: 15px 0; // трішки більше простору
+    height: auto;
+    padding: 15px 0;
   }
 }
 </style>

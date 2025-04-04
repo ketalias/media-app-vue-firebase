@@ -137,12 +137,11 @@ export default {
           this.password
         );
         console.log("User logged in:", userCredential.user);
-        // При успішному вході користувача
         auth.onAuthStateChanged((user) => {
           if (user) {
-            localStorage.setItem("user", JSON.stringify(user)); // зберігаємо користувача в localStorage
+            localStorage.setItem("user", JSON.stringify(user));
           } else {
-            localStorage.removeItem("user"); // видаляємо користувача з localStorage, якщо він вийшов
+            localStorage.removeItem("user");
           }
         });
         this.$router.push("/profile");

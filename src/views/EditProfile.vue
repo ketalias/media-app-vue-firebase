@@ -3,7 +3,6 @@
     <h2>Edit Profile</h2>
 
     <div v-if="user">
-      <!-- Profile Picture Upload -->
       <div class="profile-picture">
         <img
           :src="profilePicUrl || 'https://via.placeholder.com/150'"
@@ -12,7 +11,6 @@
         <input type="file" @change="uploadProfilePicture" />
       </div>
 
-      <!-- Edit Form -->
       <form @submit.prevent="updateProfile">
         <label>Name:</label>
         <input v-model="userData.name" type="text" required />
@@ -66,7 +64,6 @@ export default {
     });
     const profilePicUrl = ref("");
 
-    // Fetch user data from Firestore
     const fetchUserData = async () => {
       const currentUser = auth.currentUser;
       if (currentUser) {
@@ -80,7 +77,6 @@ export default {
       }
     };
 
-    // Upload Profile Picture to Firebase Storage
     const uploadProfilePicture = async (event) => {
       const file = event.target.files[0];
       if (!file) return;
@@ -95,12 +91,10 @@ export default {
       profilePicUrl.value = downloadUrl;
     };
 
-    // Update Profile Data in Firestore
     const updateProfile = async () => {
       if (user.value) {
         const userRef = doc(db, "users", user.value.uid);
 
-        // Update Firestore Data
         await setDoc(
           userRef,
           {
@@ -112,7 +106,6 @@ export default {
           { merge: true }
         );
 
-        // Update Password (if changed)
         if (userData.value.password) {
           await updatePassword(user.value, userData.value.password);
         }

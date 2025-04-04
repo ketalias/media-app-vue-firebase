@@ -90,13 +90,12 @@ export default {
       const img = new Image();
       img.src = imageSrc;
       img.onload = () => {
-        const size = Math.min(img.width, img.height); // Get smallest side to make a square
+        const size = Math.min(img.width, img.height);
         const canvas = document.createElement("canvas");
         canvas.width = size;
         canvas.height = size;
         const ctx = canvas.getContext("2d");
 
-        // Crop the center of the image
         const offsetX = (img.width - size) / 2;
         const offsetY = (img.height - size) / 2;
         ctx.drawImage(img, offsetX, offsetY, size, size, 0, 0, size, size);
@@ -145,7 +144,6 @@ export default {
           uploadedAt: new Date(),
         });
 
-        // тягнемо ім’я юзера
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
         let authorName = "Anonymous"; // дефолт
@@ -154,7 +152,6 @@ export default {
           authorName = userData.name || userData.displayName || "Anonymous";
         }
 
-        // Duplicate photo in the root collection "photos"
         const photoId = newPhotoRef.id;
         await setDoc(doc(db, "photos", photoId), {
           photoURL,
@@ -165,7 +162,7 @@ export default {
           likeCount: 0,
           uploadedAt: new Date(),
           author: user.uid,
-          authorName, // просто authorName, бо воно вже визначене
+          authorName,
         });
 
         uploadSuccess.value = "✅ Photo uploaded successfully!";

@@ -134,7 +134,7 @@ export default {
           this.currentUser = user;
           this.fetchAllUsers();
           this.fetchRandomPhotos().then(() => {
-            this.fetchFollowingPhotos(); // Викликаємо після завантаження всіх фото
+            this.fetchFollowingPhotos();
           });
         } else {
           console.error("No authenticated user found. Redirecting to login...");
@@ -188,11 +188,11 @@ export default {
               name: data.author || "Unknown",
               profilePicture: "",
             },
-            userId: data.userId || "unknown", // Додаємо значення за замовчуванням
+            userId: data.userId || "unknown",
           };
         });
         this.randomPhotos = this.getRandomItems(this.allPhotos, 5);
-        console.log("Loaded all photos:", this.allPhotos); // Для дебагу
+        console.log("Loaded all photos:", this.allPhotos);
       } catch (error) {
         console.error("Error fetching photos:", error);
       }
@@ -211,7 +211,7 @@ export default {
         this.followingPhotos = this.allPhotos.filter((photo) =>
           following.includes(photo.author)
         );
-        console.log("Following photos:", this.followingPhotos); // Для дебагу
+        console.log("Following photos:", this.followingPhotos);
 
         if (this.followingPhotos.length === 0) {
           console.log("No photos from followed users yet.");
