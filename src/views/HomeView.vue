@@ -51,7 +51,14 @@
           </button>
         </div>
         <div class="photo-feed-controls">
-          <p>Feeds</p>
+          <div class="feed-refresh">
+            <p>Feeds</p>
+            <img
+              src="../assets/refresh.png"
+              @click="refreshPhotos"
+              class="refresh-btn"
+            />
+          </div>
           <input
             v-model="tagQuery"
             type="text"
@@ -191,10 +198,21 @@ export default {
             userId: data.userId || "unknown",
           };
         });
-        this.randomPhotos = this.getRandomItems(this.allPhotos, 5);
+
+        this.randomPhotos = this.getRandomItems(this.allPhotos, 15);
         console.log("Loaded all photos:", this.allPhotos);
+        console.log("Selected random photos:", this.randomPhotos);
       } catch (error) {
         console.error("Error fetching photos:", error);
+      }
+    },
+
+    refreshPhotos() {
+      if (this.allPhotos.length > 0) {
+        this.randomPhotos = this.getRandomItems(this.allPhotos, 15);
+        console.log("Refreshed random photos:", this.randomPhotos);
+      } else {
+        this.fetchRandomPhotos();
       }
     },
     async fetchFollowingPhotos() {

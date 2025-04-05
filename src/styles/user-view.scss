@@ -90,8 +90,10 @@ $toggle-btn-bg: #0c1642; // фон кнопки перемикання
           margin: 0 auto;
           margin-top: auto;
           transform: translateY(50%);
-          border: 7px solid $border-dark;
+          border: 7px solid rgb(10, 10, 203);
           border-radius: 50%;
+          object-fit: cover;
+          object-position: center;
         }
 
         .information-text {
@@ -206,7 +208,7 @@ $toggle-btn-bg: #0c1642; // фон кнопки перемикання
       gap: 20px;
       width: 75%;
       height: auto;
-      min-height: 80vh;
+      padding: 2rem 0;
       background-color: $primary-bg;
       z-index: 100;
       @media (max-width: 968px) {
@@ -313,6 +315,39 @@ $toggle-btn-bg: #0c1642; // фон кнопки перемикання
           }
         }
       }
+    }
+  }
+}
+
+.no-photos {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  border: 1px dashed #ccc;
+
+  h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #494949;
+  }
+
+  p {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .start-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #0056b3;
     }
   }
 }

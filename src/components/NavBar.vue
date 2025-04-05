@@ -7,7 +7,7 @@
       <router-link to="/profile" active-class="active-link">
         <img src="../assets/icons8-user-96.png" alt="User" />
       </router-link>
-      <img @click="handleLogout" src="../assets/logout.png" alt="" />
+      <img @click="handleLogout" src="../assets/logout.png" alt="Logout" />
     </div>
   </nav>
 </template>
@@ -16,6 +16,7 @@
 import { doc, onSnapshot } from "firebase/firestore";
 import { signOut, getAuth } from "firebase/auth";
 import { db } from "@/firebase";
+import Swal from "sweetalert2";
 
 const auth = getAuth();
 
@@ -36,13 +37,41 @@ export default {
   },
   methods: {
     async handleLogout() {
-      try {
-        await signOut(auth);
-        localStorage.removeItem("user");
-        this.currentUser = null;
-        this.$router.push("/login");
-      } catch (error) {
-        console.error("Error logging out:", error.message);
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "Do you really want to log out?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, log out",
+        cancelButtonText: "No, stay logged in",
+      });
+
+      if (result.isConfirmed) {
+        try {
+          await signOut(auth);
+          localStorage.removeItem("user");
+          this.currentUser = null;
+
+          await Swal.fire({
+            title: "Logged Out",
+            text: "You have been successfully logged out.",
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+
+          this.$router.push("/login");
+        } catch (error) {
+          await Swal.fire({
+            title: "Logout Failed",
+            text: error.message,
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+          console.error("Error logging out:", error.message);
+        }
       }
     },
     toggleMenu() {

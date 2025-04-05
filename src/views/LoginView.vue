@@ -47,16 +47,16 @@
             <div class="input-container">
               <label for="email">Email</label>
               <input type="email" id="email" v-model="email" required />
-              <label for="password">Password</label
-              ><input
+              <label for="password">Password</label>
+              <input
                 type="password"
                 id="password"
                 v-model="password"
                 required
               />
               <div class="buttons">
-                <button type="submit">Submit</button
-                ><button
+                <button type="submit">Submit</button>
+                <button
                   class="toggle-button"
                   @click="toggleRegister"
                   :class="{ active: registerBool }"
@@ -82,6 +82,7 @@ import {
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
+import Swal from "sweetalert2";
 
 export default {
   data() {
@@ -124,7 +125,26 @@ export default {
           followers: [],
           following: [],
         });
+
+        await Swal.fire({
+          icon: "success",
+          title: "Account Created!",
+          text: `Welcome ${this.name}! Your account has been successfully created.`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        this.name = "";
+        this.registerEmail = "";
+        this.registerPassword = "";
       } catch (authError) {
+        await Swal.fire({
+          icon: "error",
+          title: "Registration Failed",
+          text: authError.message,
+          confirmButtonText: "Try Again",
+        });
+
         console.error(
           "❌ Authentication error:",
           authError.code,
@@ -140,6 +160,15 @@ export default {
           this.email,
           this.password
         );
+
+        await Swal.fire({
+          icon: "success",
+          title: "Welcome Back!",
+          text: "You have successfully signed in.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
         console.log("User logged in:", userCredential.user);
         auth.onAuthStateChanged((user) => {
           if (user) {
@@ -148,15 +177,25 @@ export default {
             localStorage.removeItem("user");
           }
         });
+
         this.$router.push("/profile");
+
+        this.email = "";
+        this.password = "";
       } catch (error) {
+        await Swal.fire({
+          icon: "error",
+          title: "Login Failed",
+          text: error.message,
+          confirmButtonText: "Try Again",
+        });
+
         console.error("Login error:", error.message);
       }
     },
     toggleRegister() {
       if (this.registerBool) {
         this.registerBool = !this.registerBool;
-
         setTimeout(() => {
           this.loginBool = !this.loginBool;
         }, 450);
