@@ -3,6 +3,7 @@ import HomeView from "../views/HomeView.vue";
 import UserView from "@/views/UserView.vue";
 import LoginView from "@/views/LoginView.vue";
 import EditProfile from "@/views/EditProfile.vue";
+import ReelsView from "../views/ReelsView.vue";
 import { auth } from "@/firebase";
 
 const routes = [
@@ -19,6 +20,11 @@ const routes = [
     path: "/login",
     name: "login",
     component: LoginView,
+  },
+  {
+    path: "/reels",
+    name: "Reels",
+    component: ReelsView,
   },
   {
     path: "/edit-profile",

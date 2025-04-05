@@ -1,6 +1,18 @@
 <template>
   <div class="photo-card">
-    <img :src="imageSrc" class="photo-card-image" alt="Photo" />
+    <div class="media-container">
+      <img
+        v-if="!isVideo"
+        :src="imageSrc"
+        class="photo-card-image"
+        alt="Photo"
+      />
+      <video v-else controls class="photo-card-image">
+        <source :src="imageSrc" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
     <div class="photo-info">
       <div class="interactions">
         <span @click="toggleLike" class="icon-wrapper">
@@ -16,6 +28,7 @@
           <p>{{ localComments.length }}</p>
         </span>
       </div>
+
       <div v-if="isEditingDescription">
         <textarea
           v-model="editedDescription"
@@ -30,7 +43,7 @@
       </p>
 
       <button v-if="userId === author" @click="deletePhoto" class="delete-btn">
-        <img src="../assets/trash.png" alt="" />
+        <img src="../assets/trash.png" alt="Delete" />
       </button>
 
       <div v-if="showComments" class="comments">
@@ -98,23 +111,19 @@ export default {
       authorName: "none",
       isEditingDescription: false,
       editedDescription: "",
+      isVideo: false,
       likeIcon: require("../assets/like.png"),
       likeFilledIcon: require("../assets/like-filled.png"),
     };
   },
   mounted() {
     const user = auth.currentUser;
-    console.log(user);
     if (user) {
       this.userId = user.uid;
       this.fetchUsername(user.uid);
-    } else {
-      this.userId = null;
-      this.username = "Anonymous";
     }
 
     const photoRef = doc(db, "photos", this.photoId);
-    // Реактивно оновлюємо дані з глобальної колекції
     onSnapshot(photoRef, (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data();
@@ -124,6 +133,7 @@ export default {
         this.localComments = data.comments || [];
         this.isLiked = this.userId && this.localLikes.includes(this.userId);
         this.editedDescription = data.description || this.description;
+        this.isVideo = data.isVideo || false;
       } else {
         console.error(`Document with photoId ${this.photoId} does not exist.`);
       }
@@ -136,45 +146,29 @@ export default {
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
           const userData = userSnap.data();
-          this.username = userData.name || userData.displayName || "Anonymous"; // беремо name або displayName
-        } else {
-          this.username = "Anonymous";
+          this.username = userData.name || userData.displayName || "Anonymous";
         }
       } catch (error) {
         console.error("Error fetching username:", error);
-        this.username = "Anonymous";
       }
     },
     async deletePhoto() {
-      if (!this.userId) {
-        alert("Please log in to delete this photo.");
+      if (!this.userId || this.userId !== this.author) {
+        alert("You can only delete your own photo.");
         return;
       }
 
-      if (this.userId !== this.author) {
-        alert("Only the author can delete this photo.");
-        return;
-      }
-
-      if (
-        !confirm(
-          "Are you sure you want to delete this photo? This action cannot be undone."
-        )
-      ) {
-        return;
-      }
+      if (!confirm("Are you sure you want to delete this photo?")) return;
 
       const photoRef = doc(db, "users", this.author, "photos", this.photoId);
       const photoCopyRef = doc(db, "photos", this.photoId);
       const storage = getStorage();
-
       const imageRef = ref(storage, this.imageSrc);
 
       try {
         await deleteObject(imageRef);
         await deleteDoc(photoRef);
         await deleteDoc(photoCopyRef);
-        this.isDeleted = true;
         this.$emit("photo-deleted", this.photoId);
       } catch (error) {
         console.error("Error deleting photo:", error);
@@ -202,29 +196,22 @@ export default {
           });
         }
       } catch (error) {
-        console.error("Error updating likes:", error);
+        console.error("Error toggling like:", error);
       } finally {
-        // Завершуємо анімацію після оновлення
         setTimeout(() => {
           this.isAnimating = false;
         }, 300);
       }
     },
     async addComment() {
-      if (!this.userId) {
-        alert("Please log in to comment.");
-        return;
-      }
-
-      const commentText = this.newComment.trim();
-      if (!commentText) {
-        alert("Please enter a valid comment.");
+      if (!this.userId || !this.newComment.trim()) {
+        alert("Please log in and enter a comment.");
         return;
       }
 
       const newCommentData = {
         username: this.username,
-        text: commentText,
+        text: this.newComment.trim(),
         timestamp: new Date().toISOString(),
       };
 
@@ -238,18 +225,12 @@ export default {
         console.error("Error adding comment:", error);
       }
     },
-
     async deleteComment(comment) {
-      if (!this.userId) {
-        alert("Please log in to delete a comment.");
-        return;
-      }
-
-      // Перевірка, чи користувач є автором коментаря або фото
-      if (this.userId !== this.author && comment.username !== this.username) {
-        alert(
-          "You can only delete your own comments or comments on your photo."
-        );
+      if (
+        !this.userId ||
+        (this.userId !== this.author && comment.username !== this.username)
+      ) {
+        alert("You can only delete your own comments.");
         return;
       }
 
@@ -263,13 +244,7 @@ export default {
       }
     },
     async updateDescription() {
-      if (!this.userId) {
-        alert("Please log in to update the description.");
-        return;
-      }
-
-      // Перевірка, чи користувач є автором фото
-      if (this.userId !== this.author) {
+      if (!this.userId || this.userId !== this.author) {
         alert("Only the author can update the description.");
         return;
       }
@@ -285,7 +260,7 @@ export default {
         await updateDoc(photoRef, {
           description: newDescription,
         });
-        this.isEditingDescription = false; // Закриваємо режим редагування
+        this.isEditingDescription = false;
       } catch (error) {
         console.error("Error updating description:", error);
       }

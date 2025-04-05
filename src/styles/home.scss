@@ -12,10 +12,11 @@
   gap: 2rem;
 
   @media (max-width: 768px) {
-    padding: 2rem;
+    padding: 0.3rem;
     width: 100%;
     max-width: none;
     margin: 0;
+    border-radius: 0;
   }
 
   .user-search {

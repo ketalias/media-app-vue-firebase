@@ -1,12 +1,16 @@
 <template>
   <nav class="navbar">
     <div :class="['navbar-links', { active: isMenuOpen }]">
+      <router-link to="/reels" active-class="active-link">
+        <img src="../assets/reels.png" alt="Reels" />
+      </router-link>
       <router-link to="/home" active-class="active-link">
         <img src="../assets/icons8-home-240.png" alt="Home" />
       </router-link>
       <router-link to="/profile" active-class="active-link">
         <img src="../assets/icons8-user-96.png" alt="User" />
       </router-link>
+
       <img @click="handleLogout" src="../assets/logout.png" alt="Logout" />
     </div>
   </nav>

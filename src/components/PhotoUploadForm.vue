@@ -14,7 +14,7 @@
             type="file"
             ref="fileInput"
             @change="handlePhotoUpload"
-            accept="image/*"
+            accept="image/*, video/*"
             class="file-input"
           />
         </div>
@@ -75,8 +75,14 @@ export default {
     const fileInput = ref(null);
 
     const MAX_FILE_SIZE = 5 * 1024 * 1024;
-    const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/gif"];
-
+    const ALLOWED_FILE_TYPES = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "video/mp4",
+      "video/mpeg",
+      "video/webm",
+    ];
     const handlePhotoUpload = (event) => {
       const file = event.target.files[0];
       if (!file) return;
@@ -167,6 +173,7 @@ export default {
           uploadedAt: new Date(),
           author: user.uid,
           authorName,
+          authorProfilePicture: userSnap.data().profilePicture || "",
         });
 
         uploadSuccess.value = "✅ Photo uploaded successfully!";

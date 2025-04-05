@@ -4,10 +4,8 @@
 
     <div v-if="user">
       <div class="profile-picture">
-        <img
-          :src="profilePicUrl || 'https://via.placeholder.com/150'"
-          alt="Profile Picture"
-        />
+        <img v-if="profilePicUrl" :src="profilePicUrl" class="profile-pic" />
+        <img v-else src="../assets/newuser.jpg" alt="" />
         <input type="file" @change="uploadProfilePicture" />
       </div>
 
