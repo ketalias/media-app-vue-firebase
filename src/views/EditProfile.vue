@@ -1,37 +1,37 @@
 <template>
-  <div class="profile-container">
-    <h2>Edit Profile</h2>
+  <div class="wrap">
+    <div class="profile-container">
+      <h2>Edit Profile</h2>
 
-    <div v-if="user">
-      <div class="profile-picture">
-        <img v-if="profilePicUrl" :src="profilePicUrl" class="profile-pic" />
-        <img v-else src="../assets/newuser.jpg" alt="" />
-        <input type="file" @change="uploadProfilePicture" />
+      <div v-if="user">
+        <form @submit.prevent="updateProfile">
+          <img v-if="profilePicUrl" :src="profilePicUrl" class="profile-pic" />
+          <img v-else src="../assets/newuser.jpg" alt="" />
+          <input type="file" @change="uploadProfilePicture" />
+
+          <label>Name:</label>
+          <input v-model="userData.name" type="text" required />
+
+          <label>New Password:</label>
+          <input v-model="userData.password" type="password" />
+
+          <label>Description:</label>
+          <textarea v-model="userData.description"></textarea>
+
+          <label>Interest Tags:</label>
+          <input
+            v-model="userData.interests"
+            type="text"
+            placeholder="e.g., coding, hiking, music"
+          />
+
+          <button type="submit">Update Profile</button>
+        </form>
       </div>
 
-      <form @submit.prevent="updateProfile">
-        <label>Name:</label>
-        <input v-model="userData.name" type="text" required />
-
-        <label>New Password:</label>
-        <input v-model="userData.password" type="password" />
-
-        <label>Description:</label>
-        <textarea v-model="userData.description"></textarea>
-
-        <label>Interest Tags:</label>
-        <input
-          v-model="userData.interests"
-          type="text"
-          placeholder="e.g., coding, hiking, music"
-        />
-
-        <button type="submit">Update Profile</button>
-      </form>
-    </div>
-
-    <div v-else>
-      <p>Loading user data...</p>
+      <div v-else>
+        <p>Loading user data...</p>
+      </div>
     </div>
   </div>
 </template>
@@ -126,19 +126,29 @@ export default {
 </script>
 
 <style>
+.wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #10032f;
+}
 .profile-container {
-  max-width: 400px;
+  max-width: 600px;
   margin: auto;
-  padding: 20px;
-  border: 1px solid #ddd;
+  padding: 20px 100px;
   border-radius: 8px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
   background-color: rgba(14, 14, 14, 0.781);
   color: white;
 }
-.profile-picture img {
-  width: 100px;
-  height: 100px;
+.profile-pic {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  margin: auto;
+  display: block;
+  border: 5px solid #ddd;
   border-radius: 50%;
 }
 .profile-picture input {

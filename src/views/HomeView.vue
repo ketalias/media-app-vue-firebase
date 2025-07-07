@@ -9,7 +9,10 @@
           @input="filterUsers"
           class="user-search__input"
         />
-        <PostsScroll />
+        <div class="publish">
+          <button @click="toggleUploadForm">Publish</button>
+          <div v-if="uploadForm"><PhotoUploadForm /></div>
+        </div>
       </div>
       <div class="user-search-results">
         <div v-if="filteredUsers.length > 0" class="user-list">
@@ -93,7 +96,7 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "@/firebase";
 import PhotoCard from "@/components/PhotoCard.vue";
-import PostsScroll from "@/components/PostComp.vue";
+import PhotoUploadForm from "@/components/PhotoUploadForm.vue";
 
 const auth = getAuth();
 
@@ -101,7 +104,7 @@ export default {
   name: "HomeView",
   components: {
     PhotoCard,
-    PostsScroll,
+    PhotoUploadForm,
   },
   data() {
     return {
@@ -114,6 +117,7 @@ export default {
       tagQuery: "",
       showFollowingPhotos: false,
       currentUser: null,
+      uploadForm: false,
     };
   },
   computed: {
@@ -135,6 +139,10 @@ export default {
     this.checkAuthState();
   },
   methods: {
+    toggleUploadForm() {
+      this.uploadForm = !this.uploadForm;
+    },
+
     checkAuthState() {
       onAuthStateChanged(auth, (user) => {
         if (user) {

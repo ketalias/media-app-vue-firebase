@@ -74,10 +74,16 @@
           </button>
 
           <div :class="viewClass">
-            <div v-if="filteredImages.length === 0" class="no-photos">
+            <div
+              v-if="filteredImages.length === 0 && isCurrentUser"
+              class="no-photos"
+            >
               <h2>Let's Start!</h2>
               <p>No photos yet. Upload your first image to begin.</p>
-              <PostComp />
+              <div class="publish">
+                <button @click="toggleUploadForm">Publish</button>
+                <div v-if="uploadForm"><PhotoUploadForm /></div>
+              </div>
             </div>
 
             <PhotoCard
@@ -108,7 +114,6 @@ import {
 import { signOut, getAuth, onAuthStateChanged } from "firebase/auth";
 import PhotoCard from "@/components/PhotoCard.vue";
 import { db } from "@/firebase";
-import PostComp from "../components/PostComp.vue";
 
 const auth = getAuth();
 
@@ -116,7 +121,6 @@ export default {
   name: "UserView",
   components: {
     PhotoCard,
-    PostComp,
   },
   data() {
     return {
@@ -131,6 +135,7 @@ export default {
       images: [],
       interests: [],
       isGridView: false,
+      uploadForm: false,
       currentUser: null, // Залогінений користувач
       targetUserId: null, // ID користувача, чий профіль переглядається
     };
@@ -205,6 +210,9 @@ export default {
     }
   },
   methods: {
+    toggleUploadForm() {
+      this.uploadForm = !this.uploadForm;
+    },
     async followUser() {
       if (!this.currentUser || !this.targetUserId) {
         console.error(

@@ -3,13 +3,15 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
+const env = import.meta.env || process.env;
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDaNV_9WpgE4PX8jh83c6h9SBxCQZGrDVE",
-  authDomain: "interactive-album.firebaseapp.com",
-  projectId: "interactive-album",
-  storageBucket: "interactive-album.firebasestorage.app",
-  messagingSenderId: "141954034172",
-  appId: "1:141954034172:web:d4ee95ff35a2b42e52aa79",
+  apiKey: env.VUE_APP_FIREBASE_API_KEY,
+  authDomain: env.VUE_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: env.VUE_APP_FIREBASE_PROJECT_ID,
+  storageBucket: env.VUE_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: env.VUE_APP_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);

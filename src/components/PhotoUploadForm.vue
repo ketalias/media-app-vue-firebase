@@ -250,6 +250,9 @@ $text-color: #e0e0e0;
 
 .close-btn {
   position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   top: 10px;
   right: 10px;
   background: none;
@@ -258,7 +261,7 @@ $text-color: #e0e0e0;
   color: $text-color;
   cursor: pointer;
   padding: 0;
-  width: 24px;
+  width: 25px;
   height: 24px;
   line-height: 24px;
   &:hover {

@@ -1,10 +1,19 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import HomeView from "@/views/HomeView.vue";
 import UserView from "@/views/UserView.vue";
 import LoginView from "@/views/LoginView.vue";
 import EditProfile from "@/views/EditProfile.vue";
-import ReelsView from "../views/ReelsView.vue";
+import ReelsView from "@/views/ReelsView.vue";
 import { auth } from "@/firebase";
+
+const isAuthenticated = () => {
+  const storedUser = localStorage.getItem("user");
+  return auth.currentUser || (storedUser && JSON.parse(storedUser));
+};
+
+const requireAuth = (to, from, next) => {
+  isAuthenticated() ? next() : next("/login");
+};
 
 const routes = [
   {
@@ -23,43 +32,25 @@ const routes = [
   },
   {
     path: "/reels",
-    name: "Reels",
+    name: "reels",
     component: ReelsView,
   },
   {
     path: "/edit-profile",
     name: "edit-profile",
     component: EditProfile,
-    beforeEnter: (to, from, next) => {
-      const storedUser = localStorage.getItem("user");
-      const user = storedUser ? JSON.parse(storedUser) : null;
-
-      if (auth.currentUser || user) {
-        next();
-      } else {
-        next("/login");
-      }
-    },
+    beforeEnter: requireAuth,
   },
   {
     path: "/profile/:userId?",
-    name: "UserView",
+    name: "user-view",
     component: UserView,
-    beforeEnter: (to, from, next) => {
-      const storedUser = localStorage.getItem("user");
-      const user = storedUser ? JSON.parse(storedUser) : null;
-
-      if (auth.currentUser || user) {
-        next(); // Користувач автентифікований, дозволяємо доступ
-      } else {
-        next("/login"); // Перенаправляємо на логін, якщо немає автентифікації
-      }
-    },
+    beforeEnter: requireAuth,
   },
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory("/"),
   routes,
 });
 
